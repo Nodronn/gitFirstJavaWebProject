@@ -1,15 +1,20 @@
 package org.example.crud;
 
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.io.PrintWriter;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 
-@WebServlet("/updater")
-public class UpdatePerson extends HttpServlet {
+@WebServlet("/edit")
+public class EditPerson extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -17,7 +22,7 @@ public class UpdatePerson extends HttpServlet {
         int id = Integer.parseInt(tempId);
         Person person = PersonDao.getOnePerson(id);
         request.setAttribute("person", person);
-        getServletContext().getRequestDispatcher("/updater.jsp").forward(request, response);
+        getServletContext().getRequestDispatcher("/edit.jsp").forward(request, response);
     }
 
     @Override
@@ -25,7 +30,7 @@ public class UpdatePerson extends HttpServlet {
         String tempId = request.getParameter("id");
         int id = Integer.parseInt(tempId);
         String userName=request.getParameter("userName");
-        String userPass=request.getParameter("userPass");
+        String userPass= EncryptDecryptPassword.encrypt(request.getParameter("userPass"));
         String userEmail=request.getParameter("userEmail");
         String userCountry=request.getParameter("userCountry");
 
@@ -38,7 +43,16 @@ public class UpdatePerson extends HttpServlet {
 
         int status = PersonDao.updateUserInfo(person);
         if (status > 0){
-            response.sendRedirect("view");
+            HttpSession httpSession = request.getSession();
+            httpSession.setAttribute("userName", person.getUserName());
+            httpSession.setAttribute("userEmail", person.getUserEmail());
+            httpSession.setAttribute("userCountry", person.getUserCountry());
+            httpSession.setAttribute("userId", person.getId());
+            System.out.println(person.getId());
+            System.out.println(person.getUserName());
+            System.out.println(person.getUserEmail());
+            System.out.println(person.getUserCountry());
+            response.sendRedirect("authed_person.jsp");
         }
 
     }

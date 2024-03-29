@@ -7,6 +7,8 @@ public class Person {
     private String userEmail;
     private String userCountry;
 
+    private String userPermission;
+
     public int getId() {
         return id;
     }
@@ -45,5 +47,13 @@ public class Person {
 
     public void setUserCountry(String userCountry) {
         this.userCountry = userCountry;
+    }
+
+    public String getUserPermission() {
+        return userPermission;
+    }
+
+    public void setUserPermission(String userPermission) {
+        this.userPermission = userPermission;
     }
 }

@@ -1,7 +1,11 @@
 package org.example.crud;
 
 import java.io.*;
-import java.sql.*;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.*;
@@ -16,20 +20,23 @@ public class Register extends HttpServlet {
 		PrintWriter printWriter = response.getWriter();
 		
 		String userName=request.getParameter("userName");
-		String userPass=request.getParameter("userPass");
-		String userEmail=request.getParameter("userEmail");
+        String userPass= EncryptDecryptPassword.encrypt(request.getParameter("userPass"));
+        String userEmail=request.getParameter("userEmail");
 		String userCountry=request.getParameter("userCountry");
+		String userPermission=request.getParameter("userPermission");
 
 		Person person = new Person();
 		person.setUserName(userName);
 		person.setUserPass(userPass);
 		person.setUserEmail(userEmail);
 		person.setUserCountry(userCountry);
+		person.setUserPermission(userPermission);
 
 		int status = PersonDao.save(person);
 		if (status >0){
 			printWriter.print("<h1>User successfully saved</h1>");
-			request.getRequestDispatcher("index.html").include(request,response);
+			response.sendRedirect("registration.html");
+			//request.getRequestDispatcher("index.html").include(request,response);
 		}
 		else {
 			printWriter.print("Something went wrong");

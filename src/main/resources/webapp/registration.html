@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="ISO-8859-1">
+    <title>Insert title here</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div class="registrationForm">
+    <div class="registrationPageTitle">
+        Add New Employee
+    </div>
+    <form action="reg" method="post">
+        <table>
+            <tr><th>Name:</th><td><input type="text" name="userName"/></td></tr>
+            <tr><th>Password:</th><td><input type="password" name="userPass"/></td></tr>
+            <tr><th>Email:</th><td><input type="email" name="userEmail"/></td></tr>
+            <tr><th>Country:</th><td>
+                <select name="userCountry" style="width:178px">
+                    <option selected="selected"> Select your country</option>
+                    <option>India</option>
+                    <option>USA</option>
+                    <option>UK</option>
+                    <option>Russia</option>
+                    <option>Germany</option>
+                    <option>Other</option>
+                </select>
+            </td></tr>
+            <tr><th>Permission:</th>
+                <td><input type="radio" name="userPermission" value="admin">admin
+                    <input type="radio" name="userPermission" value="customer"> customer
+            </td></tr>
+        </table>
+        <table>
+            <div class="submitButton">
+                <tr><td><input type="submit" value="register"/></td>
+            </div>
+        </table>
+    </form>
+</div>
+<br>
+<div class="viewInfo">
+    <td><a href="index.html">Return to home page</a></td></tr>
+</div>
+
+</body>
+</html>

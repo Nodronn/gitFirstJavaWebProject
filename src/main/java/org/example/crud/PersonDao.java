@@ -1,5 +1,12 @@
 package org.example.crud;
 
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.sql.*;
 import java.util.ArrayList;
 
@@ -25,11 +32,12 @@ public class PersonDao {
         int status = 0;
         try {
             Connection connection = PersonDao.getConnection();
-            PreparedStatement preparedStatement = connection.prepareStatement("insert into crud_example (userName,userPass,userEmail,userCountry) values(?,?,?,?)");
+            PreparedStatement preparedStatement = connection.prepareStatement("insert into crud_example (userName,userPass,userEmail,userCountry,userPermission) values(?,?,?,?,?)");
             preparedStatement.setString(1, person.getUserName());
             preparedStatement.setString(2, person.getUserPass());
             preparedStatement.setString(3, person.getUserEmail());
             preparedStatement.setString(4, person.getUserCountry());
+            preparedStatement.setString(5, person.getUserPermission());
             status = preparedStatement.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -52,6 +60,7 @@ public class PersonDao {
                 person.setUserPass(resultSet.getString(3));
                 person.setUserEmail(resultSet.getString(4));
                 person.setUserCountry(resultSet.getString(5));
+                person.setUserPermission(resultSet.getString(6));
                 arrayList.add(person);
             }
         } catch (SQLException e) {
@@ -71,14 +80,14 @@ public class PersonDao {
             while (resultSet.next()) {
                 person.setId(resultSet.getInt(1));
                 person.setUserName(resultSet.getString(2));
-                person.setUserPass(resultSet.getString(3));
+                person.setUserPass(EncryptDecryptPassword.decrypt(resultSet.getString(3)));
                 person.setUserEmail(resultSet.getString(4));
                 person.setUserCountry(resultSet.getString(5));
+                person.setUserPermission(resultSet.getString(6));
             }
         }catch (SQLException e) {
             throw new RuntimeException(e);
         }
-
         return person;
     }
 
@@ -116,5 +125,31 @@ public class PersonDao {
         }
 
         return status;
+    }
+
+    public static Person checkPersonIfExists(Person person) {
+        int status = 0;
+        try {
+            Connection connection = PersonDao.getConnection();
+            PreparedStatement preparedStatement = connection.prepareStatement("select * from crud_example where userEmail=? and userPass=?");
+            preparedStatement.setString(1, person.getUserEmail());
+            preparedStatement.setString(2, person.getUserPass());
+
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) {
+                person.setId(resultSet.getInt(1));
+                person.setUserName(resultSet.getString(2));
+                person.setUserPass(resultSet.getString(3));
+                person.setUserEmail(resultSet.getString(4));
+                person.setUserCountry(resultSet.getString(5));
+                person.setUserPermission(resultSet.getString(6));
+                return person;
+
+            }
+            return null;
+        } catch (
+                SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
